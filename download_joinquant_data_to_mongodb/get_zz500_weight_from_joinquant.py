@@ -1,33 +1,32 @@
 from jqdatasdk import *
-import pandas as pd
 from data_base.mongodb import MongoDB_io
-
-
 auth('15915765128','87662638qjf')
+import pandas as pd
 
-start_date='2005-01-01'
-group_day_num=1000
-group_num=4
+def get_trade_date_list(start_date_str='2010-01-01'):
+    return get_trade_days(start_date=start_date_str, end_date=None, count=None)
 
-trade_date_list=get_trade_days(start_date=start_date, end_date=None, count=None)
-
-weight_df=pd.DataFrame()
-for date in trade_date_list[(group_num-1)*group_day_num:group_num*group_day_num]:
-    print(date)
-    weight_df = weight_df.append(get_index_weights('000905.XSHG', date=date).reset_index())
+def get_zz500_weight(date_str):
+    weight_df = get_index_weights('000905.XSHG', date=date_str).reset_index()
+    weight_df.date=pd.to_datetime(weight_df.date)
+    return weight_df
     pass
 
-## df 格式修改
-weight_df.date=pd.to_datetime(weight_df.date)
-if 'index' in weight_df.columns:
-    weight_df.drop('index',axis=1,inplace=True)
+def insert_zz500_weight(weight_df):
+    # 插入数据库
+    m = MongoDB_io()
+    m.set_db('stock_daily_data')
+    m.set_collection('zz500_weight')
+    m.insert_dataframe_to_mongodb(weight_df)
     pass
-print('transfer done')
 
-# 插入数据库
-m=MongoDB_io()
-m.set_db('stock_daily_data')
-m.set_collection('zz500_weight')
-m.insert_huge_dataframe_by_block_to_mongodb(weight_df)
+
+if __name__=='__main__':
+    trade_date_list=get_trade_date_list()
+    for date in trade_date_list:
+        df=get_zz500_weight(date)
+        insert_zz500_weight(df)
+    pass
+
 
 pass

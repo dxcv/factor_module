@@ -106,6 +106,12 @@ class MongoDB_io(object):
         collection_handle.update({},{'$unset':{factor_name:''}},upsert=False,multi=False)
         pass
 
+    @ cal_time
+    def remove_all_documents_from_mongodb(self):
+        collection_handle=self.collection_handle
+        collection_handle.delete_many()
+        pass
+
 
 
     @ cal_time

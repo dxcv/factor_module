@@ -2,6 +2,9 @@
   <dictionary name="yc">
     <words>
       <w>dataframe</w>
+      <w>joinquant</w>
+      <w>upsert</w>
+      <w>xshg</w>
     </words>
   </dictionary>
 </component>

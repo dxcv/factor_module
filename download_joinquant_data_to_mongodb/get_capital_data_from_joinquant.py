@@ -4,36 +4,36 @@ from data_base.mongodb import MongoDB_io
 
 
 auth('15915765128','87662638qjf')
-
 start_date='2005-01-01'
-group_day_num=1000
-group_num=4
 
-trade_date_list=get_trade_days(start_date=start_date, end_date=None, count=None)
+def get_trade_date_list(start_date_str=start_date):
+    return get_trade_days(start_date=start_date_str, end_date=None, count=None)
 
-
-weight_df=pd.DataFrame()
-for date in trade_date_list[(group_num-1)*group_day_num:group_num*group_day_num]:
-    print(date)
+def get_one_day_capital(date_str):
     q = query(valuation).filter(valuation.market_cap > 0)
-    df = get_fundamentals(q,date)
-    df=df.loc[:,['code','day','market_cap','circulating_cap','circulating_market_cap']]
-    df.rename(columns={'day':'date'},inplace=True)
-    # 打印出总市值
-    weight_df=weight_df.append(df)
+    capital_df = get_fundamentals(q,date_str)
+    capital_df=capital_df.loc[:,['code','day','market_cap','circulating_cap','circulating_market_cap']]
+    capital_df.rename(columns={'day':'date'},inplace=True)
+    return capital_df
+
+def insert_capital_data(df):
+    # 插入数据库
+    m = MongoDB_io()
+    m.set_db('stock_daily_data')
+    m.set_collection('stock_capital_data')
+    m.insert_dataframe_to_mongodb(df)
     pass
 
-## df 格式修改
-weight_df.date=pd.to_datetime(weight_df.date)
-if 'index' in weight_df.columns:
-    weight_df.drop('index',axis=1,inplace=True)
-    pass
-print('transfer done')
+if __name__=='__main__':
+    trade_date_list=get_trade_date_list()
+    for date in trade_date_list:
+        print(date)
+        capital=get_one_day_capital(date)
+        insert_capital_data(capital)
+        pass
 
-# 插入数据库
-m=MongoDB_io()
-m.set_db('stock_daily_data')
-m.set_collection('stock_capital_data')
-m.insert_huge_dataframe_by_block_to_mongodb(weight_df)
+    pass
+
+
 
 pass
