@@ -1,4 +1,4 @@
-from download_joinquant_data_to_mongodb.get_real_market_data import *
+from download_stock_daily_data.get_real_market_data import *
 import pandas as pd
 from data_base.mongodb import MongoDB_io
 

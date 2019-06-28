@@ -1,4 +1,4 @@
-from download_joinquant_data_to_mongodb.get_sw_industry_from_joinquant import *
+from download_stock_daily_data.get_sw_industry_from_joinquant import *
 
 
 if __name__=='__main__':

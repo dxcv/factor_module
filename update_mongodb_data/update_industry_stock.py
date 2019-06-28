@@ -1,4 +1,4 @@
-from download_joinquant_data_to_mongodb.get_industry_stocks import *
+from download_stock_daily_data.get_industry_stocks import *
 
 
 

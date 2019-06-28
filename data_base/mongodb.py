@@ -8,6 +8,7 @@ def cal_time(f):
     def inner(*args, **kwargs):
         # 函数前执行
         t1 = time.time()
+        print(f.__name__)
         ret = f(*args, **kwargs)
         # 函数后执行
         t2 = time.time()
@@ -25,8 +26,8 @@ class MongoDB_io(object):
         self.collection_handle=None
         pass
 
-    def set_MongoClient(self,id_address,port,username='qjf', password='1234', authSource='admin', authMechanism='SCRAM-SHA-1'):
-        self.client=pymongo.MongoClient(id_address,port,username=username, password=password, authSource=authSource, authMechanism=authMechanism)
+    def set_MongoClient(self,id_address='192.168.0.117',port=27017,username='qjf', password='1234', authSource='admin', authMechanism='SCRAM-SHA-1'):
+        self.client=pymongo.MongoClient(host=id_address,port=port,username=username, password=password, authSource=authSource, authMechanism=authMechanism)
         pass
 
     def set_db(self,db):
@@ -42,6 +43,8 @@ class MongoDB_io(object):
         collection_list=db_handle.list_collection_names(session=None)
         return collection_list
         pass
+
+
 
     @ cal_time
     def insert_dataframe_to_mongodb_one_by_one(self, df=pd.DataFrame()):
@@ -184,7 +187,9 @@ pass
 
 if __name__=='__main__':
     m=MongoDB_io()
-    m.set_db('tick_factor')
+    # m.set_db('tick_factor')
+
+    m.set_MongoClient()
 
     # # 测试带有筛选条件的查询
     # m.set_collection('bs_ratio')

@@ -1,5 +1,5 @@
 from data_base.mongodb import MongoDB_io
-from download_joinquant_data_to_mongodb.get_trade_day_from_joinquant import get_trade_date_from_joinquant,insert_trade_date_data
+from download_stock_daily_data.get_trade_day_from_joinquant import get_trade_date_from_joinquant,insert_trade_date_data
 import pandas as pd
 
 

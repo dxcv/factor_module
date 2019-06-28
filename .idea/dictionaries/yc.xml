@@ -2,7 +2,10 @@
   <dictionary name="yc">
     <words>
       <w>dataframe</w>
+      <w>fama</w>
       <w>joinquant</w>
+      <w>resid</w>
+      <w>tday</w>
       <w>upsert</w>
       <w>xshg</w>
     </words>

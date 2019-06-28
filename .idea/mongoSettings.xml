@@ -13,6 +13,55 @@
             <SshTunnelingConfiguration />
           </option>
         </ServerConfiguration>
+        <ServerConfiguration>
+          <option name="password" value="123" />
+          <option name="serverUrls">
+            <list>
+              <option value="192.168.0.117:27017" />
+            </list>
+          </option>
+          <option name="sshTunnelingConfiguration">
+            <SshTunnelingConfiguration />
+          </option>
+          <option name="username" value="admin" />
+        </ServerConfiguration>
+        <ServerConfiguration>
+          <option name="serverUrls">
+            <list>
+              <option value="192.168.0.117:27017" />
+            </list>
+          </option>
+          <option name="sshTunnelingConfiguration">
+            <SshTunnelingConfiguration />
+          </option>
+        </ServerConfiguration>
+        <ServerConfiguration>
+          <option name="authenticationDatabase" value="admin" />
+          <option name="authenticationMechanism" value="SCRAM-SHA-1" />
+          <option name="password" value="1234" />
+          <option name="serverUrls">
+            <list>
+              <option value="192.168.0.117:27017" />
+            </list>
+          </option>
+          <option name="sshTunnelingConfiguration">
+            <SshTunnelingConfiguration />
+          </option>
+          <option name="username" value="qjf" />
+        </ServerConfiguration>
+        <ServerConfiguration>
+          <option name="authenticationMechanism" value="SCRAM-SHA-1" />
+          <option name="password" value="1234" />
+          <option name="serverUrls">
+            <list>
+              <option value="192.168.0.117:27017" />
+            </list>
+          </option>
+          <option name="sshTunnelingConfiguration">
+            <SshTunnelingConfiguration />
+          </option>
+          <option name="username" value="qjf" />
+        </ServerConfiguration>
       </list>
     </option>
   </component>

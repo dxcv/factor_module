@@ -1,6 +1,6 @@
 import pandas as pd
 from data_base.mongodb import MongoDB_io
-from download_joinquant_data_to_mongodb.get_capital_data_from_joinquant import get_one_day_capital,insert_capital_data,get_trade_date_list
+from download_stock_daily_data.get_capital_data_from_joinquant import get_one_day_capital,insert_capital_data,get_trade_date_list
 
 
 
