@@ -11,11 +11,16 @@ from data_base.mongodb import MongoDB_io
 import pandas as pd
 import statsmodels.api as sm
 import collections
-import matplotlib.pyplot as plt
+import gc
+
+# import matplotlib.pyplot as plt
 
 #%%
 
-def calculate_stat(stock_min_data, stock_tday, index_min_data, n=20):
+def calculate_stat(stock_min_data_to_copy, stock_tday, index_min_data_to_copy, n=20):
+    stock_min_data=stock_min_data_to_copy.copy()
+    index_min_data=index_min_data_to_copy.copy()
+
     stock_min_data['DATE']=stock_min_data.DATETIME.apply(lambda xx:xx[:10])
     index_min_data['DATE']=index_min_data.DATETIME.apply(lambda xx:xx[:10])
     regress_df=pd.DataFrame()
@@ -42,6 +47,9 @@ def calculate_stat(stock_min_data, stock_tday, index_min_data, n=20):
     morning_close.set_index('DATE',inplace=True)
     morning_close_series=morning_open['CLOSE']
     ram = morning_close_series / morning_open_series - 1
+
+
+
     # 股票下午收益率
     noon_open:pd.DataFrame = stock_min_data[stock_min_data.DATETIME.isin(noon_open_time_lt)]
     noon_open.set_index('DATE',inplace=True)
@@ -50,6 +58,7 @@ def calculate_stat(stock_min_data, stock_tday, index_min_data, n=20):
     noon_close.set_index('DATE',inplace=True)
     noon_close_series=noon_open['CLOSE']
     rpm = noon_close_series / noon_open_series - 1
+
     # 指数上午收益率
     index_morning_open:pd.DataFrame = index_min_data[index_min_data.DATETIME.isin(morning_open_time_lt)]
     index_morning_open.set_index('DATE',inplace=True)
@@ -103,8 +112,6 @@ def calculate_stat(stock_min_data, stock_tday, index_min_data, n=20):
     # 因子值是通过当天的数据算得的
     return regress_df['apm'].dropna()
 
-#%%
-
 if __name__=="__main__":
 
     #%% 获得交易日
@@ -127,15 +134,18 @@ if __name__=="__main__":
     stock_code.sort()
 
 
-
     #%% cal_factor
+    import sys
     factor_df=pd.DataFrame()
     for stock in stock_code:
         try:
-            print(stock)
+            print(sys.getrefcount(index_data))
             m.set_collection(stock)
-            stock_min_data=m.read_data_to_get_dataframe()
-            factor_data=calculate_stat(stock_min_data,trade_date,index_min_data=index_data)
+            print(sys.getrefcount(index_data))
+            stock_min_data = m.read_data_to_get_dataframe()
+            print(sys.getrefcount(index_data))
+            factor_data = calculate_stat(stock_min_data, trade_date, index_min_data_to_copy=index_data)
+            print(sys.getrefcount(index_data))
             factor_df[stock]=factor_data
         except:
             continue

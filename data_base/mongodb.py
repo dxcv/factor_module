@@ -1,22 +1,9 @@
 import pymongo
 import pandas as pd
-import time
-# import json
+from decorate_func.decorate_function import cal_time
 
 
-def cal_time(f):
-    def inner(*args, **kwargs):
-        # 函数前执行
-        t1 = time.time()
-        print(f.__name__)
-        ret = f(*args, **kwargs)
-        # 函数后执行
-        t2 = time.time()
-        print('consume time: ', t2 - t1)
-        return ret
-        pass
-    return inner
-    pass
+
 
 
 class MongoDB_io(object):
@@ -26,6 +13,9 @@ class MongoDB_io(object):
         self.collection_handle=None
         pass
 
+    """
+    设置数据库
+    """
     def set_MongoClient(self,id_address='192.168.0.117',port=27017,username='qjf', password='1234', authSource='admin', authMechanism='SCRAM-SHA-1'):
         self.client=pymongo.MongoClient(host=id_address,port=port,username=username, password=password, authSource=authSource, authMechanism=authMechanism)
         pass
@@ -44,7 +34,9 @@ class MongoDB_io(object):
         return collection_list
         pass
 
-
+    """
+    插入数据
+    """
 
     @ cal_time
     def insert_dataframe_to_mongodb_one_by_one(self, df=pd.DataFrame()):
@@ -69,7 +61,7 @@ class MongoDB_io(object):
         collection_handle.insert_many(df_data_list)
         pass
 
-    @ cal_time
+    # @ cal_time
     def insert_huge_dataframe_by_block_to_mongodb(self, df=pd.DataFrame(), block_len=100000):
         print('inserting {0} documents'.format(df.shape[0]))
         block_count = 1
@@ -81,6 +73,10 @@ class MongoDB_io(object):
             df = df.iloc[block_len:]
             pass
         pass
+
+    """
+    upsert
+    """
 
     @ cal_time
     def upsert_dict_to_mongodb(self, condition=None, upsert_dict=None):
@@ -109,13 +105,25 @@ class MongoDB_io(object):
         collection_handle.update({},{'$unset':{factor_name:''}},upsert=False,multi=False)
         pass
 
+    """
+    delete document
+    """
+
     @ cal_time
     def remove_all_documents_from_mongodb(self):
         collection_handle=self.collection_handle
         collection_handle.delete_many()
         pass
 
+    @ cal_time
+    def delete_document_include_condition(self,condition={}):
+        collection_handle=self.collection_handle
+        collection_handle.delete_many(condition)
+        pass
 
+    """
+    read data
+    """
 
     @ cal_time
     def read_data_to_get_dataframe(self):
@@ -174,11 +182,13 @@ class MongoDB_io(object):
         pass
 
     @ cal_time
-    def delete_document_include_condition(self,condition=None):
+    def get_db_date_list(self):
         collection_handle=self.collection_handle
-        collection_handle.delete_many(condition)
+        cursor=collection_handle.find({},{'date'})
+        data_df = pd.DataFrame(list(cursor))
+        date_list=data_df['date'].drop_duplicates().sort_values().tolist()
+        return date_list
         pass
-
 
 
 pass

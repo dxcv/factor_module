@@ -1,10 +1,7 @@
-from jqdatasdk import *
-import pandas as pd
 from data_base.mongodb import MongoDB_io
-auth('15915765128','87662638qjf')
+from download_stock_daily_data.basical_func import *
+import pandas as pd
 
-def get_trade_date_list(start_date_str='2010-01-01'):
-    return get_trade_days(start_date=start_date_str, end_date=None, count=None)
 
 def get_sw_industry_level1_list():
     return get_industries(name='sw_l1')
@@ -21,21 +18,55 @@ def get_one_date_industry_data(date_str,industry_code_list):
     return daily_industry_df
     pass
 
-def insert_industry_stocks(df):
-    # 插入数据库
-    m = MongoDB_io()
+def logging_industry_stocks():
+    global m
+    # m = MongoDB_io()
     m.set_db('stock_daily_data')
     m.set_collection('stock_sw_industry_code')
-    m.insert_dataframe_to_mongodb(df)
     pass
 
-if __name__=='__main__':
-    trade_date_list=get_trade_date_list()
+def insert_industry_stock(initial_flag=False):
+    global m
+    start_date=get_setting_start_date()
+    logging_joinquant()
+    logging_industry_stocks()
+    if initial_flag:
+        trade_date_list=get_trade_date_list(start_date)
+        pass
+    else:
+        start_date, end_date = m.get_start_end_date()
+        end_date_str = (end_date + pd.Timedelta('1 day')).strftime('%Y-%m-%d')
+        trade_date_list = get_trade_date_list(end_date_str)
     industry_list=get_sw_industry_level1_list()
     for date in trade_date_list:
         print(date)
         one_day_data=get_one_date_industry_data(date,industry_list)
-        insert_industry_stocks(one_day_data)
+        m.insert_dataframe_to_mongodb(one_day_data)
         pass
+    pass
+
+def delete_duplicate_document():
+    global m
+    m=MongoDB_io()
+    logging_industry_stocks()
+    df=m.read_data_to_get_dataframe_include_condition(start_date='2010-01-01',end_date='2010-01-06')
+    ## 发现重复的日期是2010-01-04， 2010-01-05
+    condition1 = dict()
+    condition2 = dict()
+
+    condition1['date'] = pd.to_datetime('2010-01-04')
+    condition2['date'] = pd.to_datetime('2010-01-05')
+    condition = {'$or': [condition1, condition2]}
+
+    feedback=m.delete_document_include_condition(condition)
+    df_processed=df.drop_duplicates()
+    m.insert_dataframe_to_mongodb(df_processed)
+    print(feedback)
+    pass
+
+
+if __name__=='__main__':
+    m=MongoDB_io()
+    insert_industry_stock()
     pass
 

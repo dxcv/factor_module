@@ -1,85 +1,91 @@
 import pandas as pd
 import numpy as np
-import statsmodels.api as sm
+# import statsmodels.api as sm
 # import time
-import sys
-sys.path.append('D:/code/tick_data_handle/read_mongodb/')
+# import sys
+# sys.path.append('D:/code/tick_data_handle/read_mongodb/')
 # from data_base import MongoDB_io
 
 #%%
 class preprocess(object):
     def __init__(self):
         # read_data
-        path='D:/code/tick_data_handle/prepare_neutralise_data/prepare_data/'
-        day_data_dict=pd.read_pickle(path+'stock_daily_market_data.pkl').to_dict()
-        self.day_ipo=pd.read_pickle(path+'ipo_day.pkl')
-        self.barra_dict = {'lncap':pd.read_pickle(path+'capital.pkl')}
-        self.stock_500_component = pd.read_pickle(path+'zz500_weight.pkl')
+        # path='D:/code/tick_data_handle/prepare_neutralise_data/prepare_data/'
+        # day_data_dict=pd.read_pickle(path+'stock_daily_market_data.pkl').to_dict()
+        # self.day_ipo=pd.read_pickle(path+'ipo_day.pkl')
+        # self.barra_dict = {'lncap':pd.read_pickle(path+'capital.pkl')}
+        # self.stock_500_component = pd.read_pickle(path+'zz500_weight.pkl')
 
-        # 改格式
-        for factor in day_data_dict.keys():
-            print(factor)
-            day_data_dict[factor].columns=day_data_dict[factor].columns.to_series(
+        self.unprocessed_factor_df=None
+        self.capital_df=None
+        self.stock_industry_df=None
+        self.status_df=None
 
-            ).apply(lambda x:x[:6]+'.XSHE' if x[-2:]=='SZ' else x[:6]+'.XSHG')
-            pass
+
+        # # 改格式
+        # for factor in day_data_dict.keys():
+        #     print(factor)
+        #     day_data_dict[factor].columns=day_data_dict[factor].columns.to_series(
+        #
+        #     ).apply(lambda x:x[:6]+'.XSHE' if x[-2:]=='SZ' else x[:6]+'.XSHG')
+        #     pass
 
         #
-        self.day_data_dict=day_data_dict
+        # self.day_data_dict=day_data_dict
 
         #
-        self.org_factor=pd.DataFrame()
+        # self.org_factor=pd.DataFrame()
         self.filled_factor=pd.DataFrame()
         self.winsorized_factor=pd.DataFrame()
         self.neutralized_factor=pd.DataFrame()
         self.std_factor=pd.DataFrame()
         pass
+    #
+    # def set_factor_to_handle(self,df):
+    #     self.org_factor=df
+    #     pass
 
-    def set_factor_to_handle(self,df):
-        self.org_factor=df
-        pass
-
-    def fill_na_with_ind_mean(self):
-        """
-        填写行业均值
-        """
-        factor_df:pd.DataFrame=self.org_factor.copy()
-        day_data_dict = self.day_data_dict
-        day_ipo_df = self.day_ipo
-        try:
-            factor_df.mask(cond=np.isinf(factor_df),inplace=True)
-        except BaseException as e:
-            print(e)
-        ind_df = day_data_dict['industry'].loc[factor_df.index,factor_df.columns]
-        status_df = day_data_dict['trade_status'].loc[factor_df.index,factor_df.columns]
-        ind_mean_df = pd.DataFrame()
-        for date in factor_df.index:
-            print(date)
-            daily_factor = factor_df.loc[date]
-            daily_ipo = day_ipo_df.loc[date]
-            daily_ind:pd.Series = ind_df.loc[date]
-            daily_status = status_df.loc[date]
-            # 过滤不合条件的股票
-            avl_stock = daily_ipo[(daily_ipo >60) & (daily_ind.isnull() == 0) & (daily_status == 1)].index.tolist()
-            daily_factor = daily_factor.loc[avl_stock]
-            daily_ind = daily_ind.loc[avl_stock]
-            daily_df:pd.DataFrame = pd.concat([daily_factor,daily_ind],axis=1)
-            daily_df.columns = ['factor','ind']
-            mean_daily_df = daily_df[(daily_df['factor']<daily_df['factor'].quantile(0.99)) & (daily_df['factor']>daily_df['factor'].quantile(0.01))]
-            ind_mean = mean_daily_df.groupby('ind')['factor'].mean()
-            ind_mean.name=date
-            ind_mean_df=ind_mean_df.append(ind_mean)
-            pass
-
-        filled_factor_df:pd.DataFrame = factor_df.copy()
-        ind_mean_df.mask(cond = ind_mean_df.isnull(), other = factor_df.mean(axis=1), inplace = True, axis = 0)
-        for ind in ind_mean_df.columns:
-            print(ind)
-            filled_factor_df.mask(cond = (filled_factor_df.isnull()) & (ind_df == ind), other = ind_mean_df[ind],inplace = True, axis  = 0)
-            pass
-        # self.filled_factor_df=filled_factor_df
-        self.filled_factor=filled_factor_df
-        pass
+    # def fill_na_with_ind_mean(self):
+    #     """
+    #     把空的值填行业均值,写得很烂，重写
+    #     """
+    #     factor_df:pd.DataFrame=self.unprocessed_factor_df.copy()
+    #     day_data_dict = self.day_data_dict
+    #     day_ipo_df = self.day_ipo
+    #     try:
+    #         factor_df.mask(cond=np.isinf(factor_df),other=np.NAN,inplace=True)
+    #     except BaseException as e:
+    #         print(e)
+    #     ind_df = day_data_dict['industry'].loc[factor_df.index,factor_df.columns]
+    #     status_df = day_data_dict['trade_status'].loc[factor_df.index,factor_df.columns]
+    #     ind_mean_df = pd.DataFrame()
+    #     for date in factor_df.index:
+    #         print(date)
+    #         daily_factor = factor_df.loc[date]
+    #         daily_ipo = day_ipo_df.loc[date]
+    #         daily_ind:pd.Series = ind_df.loc[date]
+    #         daily_status = status_df.loc[date]
+    #         # 过滤不合条件的股票
+    #         avl_stock = daily_ipo[(daily_ipo >60) & (daily_ind.isnull() == 0) & (daily_status == 1)].index.tolist()
+    #         daily_factor = daily_factor.loc[avl_stock]
+    #         daily_ind = daily_ind.loc[avl_stock]
+    #         daily_df:pd.DataFrame = pd.concat([daily_factor,daily_ind],axis=1)
+    #         daily_df.columns = ['factor','ind']
+    #         mean_daily_df = daily_df[(daily_df['factor']<daily_df['factor'].quantile(0.99)) & (daily_df['factor']>daily_df['factor'].quantile(0.01))]
+    #         ind_mean = mean_daily_df.groupby('ind')['factor'].mean()
+    #         ind_mean.name=date
+    #         ind_mean_df=ind_mean_df.append(ind_mean)
+    #         pass
+    #
+    #     filled_factor_df:pd.DataFrame = factor_df.copy()
+    #     ind_mean_df.mask(cond = ind_mean_df.isnull(), other = factor_df.mean(axis=1), inplace = True, axis = 0)
+    #     for ind in ind_mean_df.columns:
+    #         print(ind)
+    #         filled_factor_df.mask(cond = (filled_factor_df.isnull()) & (ind_df == ind), other = ind_mean_df[ind],inplace = True, axis  = 0)
+    #         pass
+    #     # self.filled_factor_df=filled_factor_df
+    #     self.filled_factor=filled_factor_df
+    #     pass
 
     def winsorize(self):
         """
@@ -137,22 +143,22 @@ class preprocess(object):
         self.std_factor=std_factor
         pass
 
-    def standardize_by_benchmark(self):
-        """
-        根据基准标准化
-        :return:
-        """
-        factor_df:pd.DataFrame=self.neutralized_factor.copy()
-        # bench_mark_weight 按日期加起来是小于1
-        bench_mark_weight=self.stock_500_component.loc[factor_df.index,factor_df.columns].copy()
-        weight_sum = bench_mark_weight[factor_df.notnull()].sum(axis=1)
-        bench_mark_weight_new = bench_mark_weight.div(weight_sum, axis=0)
-        benchmark_weighted_mean = bench_mark_weight_new.mul(factor_df, axis=1).sum(axis=1)
-        std_factor = factor_df.sub(benchmark_weighted_mean, axis=0).div(factor_df.std(axis=1), axis=0)
-        # temp=std_factor.mul(bench_mark_weight)
-        # temp.sum(axis=1)
-        self.std_factor=std_factor
-        pass
+    # def standardize_by_benchmark(self):
+    #     """
+    #     根据基准标准化
+    #     :return:
+    #     """
+    #     factor_df:pd.DataFrame=self.neutralized_factor.copy()
+    #     # bench_mark_weight 按日期加起来是小于1
+    #     bench_mark_weight=self.stock_500_component.loc[factor_df.index,factor_df.columns].copy()
+    #     weight_sum = bench_mark_weight[factor_df.notnull()].sum(axis=1)
+    #     bench_mark_weight_new = bench_mark_weight.div(weight_sum, axis=0)
+    #     benchmark_weighted_mean = bench_mark_weight_new.mul(factor_df, axis=1).sum(axis=1)
+    #     std_factor = factor_df.sub(benchmark_weighted_mean, axis=0).div(factor_df.std(axis=1), axis=0)
+    #     # temp=std_factor.mul(bench_mark_weight)
+    #     # temp.sum(axis=1)
+    #     self.std_factor=std_factor
+    #     pass
 
 
     def get_industry_dummy(self, stock_list, date):
@@ -222,25 +228,25 @@ class preprocess(object):
         这个适用于算好因子，中性化后送去分层回测。
         :return:
         """
-        self.fill_na_with_ind_mean()
+        # self.fill_na_with_ind_mean()
         self.winsorize()
         self.neutralize()
         self.standardize()
         return self.std_factor
         pass
 
-    def get_preprocess_factor_v2(self):
-        """
-        这个适用于回归，算因子收益率的时候。
-        :return:
-        """
-        self.fill_na_with_ind_mean()
-        # self.winsorize_by_benchmark()
-        self.winsorize()
-        self.neutralize()
-        self.standardize_by_benchmark()
-        return self.std_factor
-        pass
+    # def get_preprocess_factor_v2(self):
+    #     """
+    #     这个适用于回归，算因子收益率的时候。
+    #     :return:
+    #     """
+    #     self.fill_na_with_ind_mean()
+    #     # self.winsorize_by_benchmark()
+    #     self.winsorize()
+    #     self.neutralize()
+    #     self.standardize_by_benchmark()
+    #     return self.std_factor
+    #     pass
     pass
 
 

@@ -1,8 +1,7 @@
-from jqdatasdk import *
-import pandas as pd
 from data_base.mongodb import MongoDB_io
+from download_stock_daily_data.basical_func import *
+import pandas as pd
 
-auth('15915765128','87662638qjf')
 
 def get_trade_date_from_joinquant(start_date='2005-01-01'):
     trade_date_list=get_trade_days(start_date=start_date, end_date=None, count=None)
@@ -24,20 +23,27 @@ def get_trade_date_from_joinquant(start_date='2005-01-01'):
     pass
 
 
-def insert_trade_date_data(df):
-    m=MongoDB_io()
+def logging_trade_date_db():
+    global m
+    # m=MongoDB_io()
     m.set_db('stock_daily_data')
     m.set_collection('stock_trade_date')
-    m.insert_huge_dataframe_by_block_to_mongodb(df)
+    # m.insert_huge_dataframe_by_block_to_mongodb(df)
+    pass
+
+def insert_trade_date_data():
+    global m
+    logging_joinquant()
+    logging_trade_date_db()
+    m.delete_document_include_condition()
+    trade_date_info=get_trade_date_from_joinquant()
+    m.insert_huge_dataframe_by_block_to_mongodb(trade_date_info)
     pass
 
 
 # 插入数据库
 if __name__=='__main__':
-    trade_date_info_df_outside=get_trade_date_from_joinquant()
-    insert_trade_date_data(trade_date_info_df_outside)
+    m=MongoDB_io()
+    insert_trade_date_data()
     pass
-
-## 后面加上更新验证模块。
-
 pass
