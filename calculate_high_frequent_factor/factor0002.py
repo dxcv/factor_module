@@ -11,9 +11,7 @@ from data_base.mongodb import MongoDB_io
 import pandas as pd
 import statsmodels.api as sm
 import collections
-import gc
 
-# import matplotlib.pyplot as plt
 
 #%%
 

@@ -13,3 +13,14 @@ def cal_time(f):
         pass
     return inner
     pass
+
+def print_func_name(f):
+    def inner(*args, **kwargs):
+        # 函数前执行
+        print(f.__name__)
+        ret = f(*args, **kwargs)
+        # 函数后执行
+        return ret
+        pass
+    return inner
+    pass

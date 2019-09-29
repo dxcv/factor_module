@@ -116,7 +116,7 @@ class MongoDB_io(object):
         pass
 
     @ cal_time
-    def delete_document_include_condition(self,condition={}):
+    def delete_document_include_condition(self,condition):
         collection_handle=self.collection_handle
         collection_handle.delete_many(condition)
         pass
@@ -129,7 +129,32 @@ class MongoDB_io(object):
     def read_data_to_get_dataframe(self):
         collection_handle=self.collection_handle
         cursor = collection_handle.find({})
-        # print('length of data is {}'.format(len(list(cursor))))
+        data_df = pd.DataFrame(list(cursor))
+        if data_df.shape[0]:
+            data_df.drop('_id',axis=1,inplace=True)
+            print('length of data is {}'.format(data_df.shape[0]))
+        return data_df
+
+    @ cal_time
+    def read_data_to_get_field(self,field):
+        collection_handle=self.collection_handle
+        cursor = collection_handle.find({},field)
+        data_df = pd.DataFrame(list(cursor))
+        if data_df.shape[0]:
+            print('length of data is {}'.format(data_df.shape[0]))
+        return data_df
+
+    def read_data_from_stock_min_db(self,start_date=None,end_date=None):
+        collection_handle=self.collection_handle
+        condition1={}
+        condition2={}
+        if start_date is not None:
+            condition1['DATETIME']={'$gt':start_date}
+        if end_date is not None:
+            condition2['DATETIME']={'$lt':end_date}
+        condition={'$and':[condition1,condition2]}
+
+        cursor = collection_handle.find(condition)
         data_df = pd.DataFrame(list(cursor))
         if data_df.shape[0]:
             data_df.drop('_id',axis=1,inplace=True)

@@ -18,7 +18,6 @@ def logging_capital_data_db():
     # m = MongoDB_io()
     m.set_db('stock_daily_data')
     m.set_collection('stock_capital_data')
-
     pass
 
 def insert_capital_data(initial_flag=False):
