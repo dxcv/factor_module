@@ -190,18 +190,18 @@ class factor_test(back_test_engine,IC_test_module):
         fig2=self.draw_ic_plot(result_dict)
 
         #
-        factor_name='apm'
+        factor_name='ir_weight'
         pic_root_addr=r'D:\code\factor_module\factor_handle\factor_report_picture'
-        pic_addr1=pic_root_addr+'/'+factor_name+'1.jpg'
+        pic_addr1=pic_root_addr+'/'+factor_name+'1.png'
         fig1.savefig(pic_addr1)
-        pic_addr2=pic_root_addr+'/'+factor_name+'2.jpg'
+        pic_addr2=pic_root_addr+'/'+factor_name+'2.png'
         fig2.savefig(pic_addr2)
         doc_handle=doc_class()
         doc_handle.write_heading(factor_name)
         doc_handle.write_dataframe(performance_df)
-        doc_handle.write_picture(pic_addr1)
+        doc_handle.write_picture(pic_addr1,height=8)
         doc_handle.write_dataframe(ic_info_concat)
-        doc_handle.write_picture(pic_addr2,height=5)
+        doc_handle.write_picture(pic_addr2,height=3)
         doc_root_addr=r'D:\code\factor_module\factor_handle\factor_report'
         doc_addr=doc_root_addr+'/'+factor_name+'.docx'
         doc_handle.save_file(doc_addr)

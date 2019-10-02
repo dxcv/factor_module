@@ -11,7 +11,7 @@ import json
 #          'zz500_weight']
 
 db_list=['stock_capital_data',
-         'stock_pre_price',
+         'stock_post_price',
          'stock_real_price',
          'stock_sw_industry_code',
          'zz500_weight']
@@ -24,11 +24,12 @@ m.set_db('stock_daily_data')
 for db in db_list:
     print(db)
     m.set_collection(db)
-    dic[db]=m.get_db_date_list()
+    trade_date_list=m.get_db_date_list()
+    dic[db]=list(map(lambda x:str(x),trade_date_list))
     dic_len[db]=len(dic[db])
     last_date_dict[db] = dic[db][-1]
     pass
 
-with open('update_condition.json','r') as f:
+with open('update_condition.json','w') as f:
     json.dump(dic,f)
 

@@ -206,7 +206,6 @@ class MongoDB_io(object):
         return start_date,end_date
         pass
 
-    @ cal_time
     def get_db_date_list(self):
         collection_handle=self.collection_handle
         cursor=collection_handle.find({},{'date'})

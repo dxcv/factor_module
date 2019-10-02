@@ -9,3 +9,4 @@ for file in os.listdir(path):
     stock_df.columns=[file[1:7]]
     factor_df=factor_df.append(stock_df.T)
     pass
+factor_df.to_csv(r'D:\code\factor_module\high_fre_factor_storage\factor_concat\factor0001.csv')

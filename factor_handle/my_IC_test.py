@@ -5,7 +5,7 @@ from scipy.stats import spearmanr
 
 class IC_test_module(object):
     def __init__(self):
-        self.nothing=None
+        self.nothing=''
         self.stock_daily_price=None
         self.trade_status=None
         self.stock_ipo = None
@@ -14,7 +14,7 @@ class IC_test_module(object):
     def Rank_Correlation(self,factor_df, return_df, significant = 0.05):
         print(self.nothing)
         #创建空列表
-        corr=pd.Series([],name='corr')
+        corr=pd.Series([],name='ic')
         p_values=pd.Series([],name='p_values')
 
         #每月计算因子与收益率的相关系数
@@ -29,17 +29,17 @@ class IC_test_module(object):
             pass
 
         #以下操作与稳健回归函数类似
-        all_corr:pd.DataFrame = pd.concat([corr,p_values],axis=1)
-        mean_ic = all_corr['corr'].mean()
-        std_ic = all_corr['corr'].std()
+        ic_pv_df:pd.DataFrame = pd.concat([corr,p_values],axis=1)
+        mean_ic = ic_pv_df['ic'].mean()
+        std_ic = ic_pv_df['ic'].std()
         ir = (mean_ic*250)/(std_ic*np.sqrt(250))
         ## 相关性显著比例
-        corr_pos_sig = all_corr[(all_corr['corr']>0) & (all_corr['p_values']<significant)].shape[0]/(all_corr.shape[0]*1.0)
-        corr_neg_sig = all_corr[(all_corr['corr']<=0) & (all_corr['p_values']<significant)].shape[0]/(all_corr.shape[0]*1.0)
+        corr_pos_sig = ic_pv_df[(ic_pv_df['ic']>0) & (ic_pv_df['p_values']<significant)].shape[0]/(ic_pv_df.shape[0]*1.0)
+        corr_neg_sig = ic_pv_df[(ic_pv_df['ic']<=0) & (ic_pv_df['p_values']<significant)].shape[0]/(ic_pv_df.shape[0]*1.0)
 
         result_dict=dict()
         result_dict['ic_stat'] = pd.Series({ 'annualised ir':ir,'mean ic':mean_ic, 'std ic':std_ic,'corr_pos_sig':corr_pos_sig,'corr_neg_sig':corr_neg_sig})
-        result_dict['corr']=all_corr
+        result_dict['ic_pv_df']=ic_pv_df
 
         return result_dict
 
@@ -84,9 +84,10 @@ class IC_test_module(object):
 
     def draw_ic_plot(self,result_dict):
         print(self.nothing,)
-        all_corr=result_dict['corr']
-        corr_significant = all_corr['corr'][all_corr['p_values']<0.05]
-        corr_non_significant = all_corr['corr'][all_corr['p_values']>=0.05]
+        ic_pv_df=result_dict['ic_pv_df']
+        ic_series=ic_pv_df.ic
+        corr_significant = ic_series[ic_series<0.05]
+        corr_non_significant = ic_series[ic_series>=0.05]
         corr_graph = pd.DataFrame({'corr_significant':corr_significant,'corr_non_significant':corr_non_significant})
         x_axis = pd.to_datetime(corr_graph.index)
         fig = plt.figure()

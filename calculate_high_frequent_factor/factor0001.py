@@ -8,7 +8,7 @@ from calculate_high_frequent_factor.common_func import *
 1 海通证券-海通证券选股因子系列研究（二十五）：高频因子之已实现波动分解
 2 calculate_up_ratio:高频上行波动占比
 """
-def calculate_up_ratio(stock_code_str,stock_min_data,n=1,stock_tday=None):
+def calculate_up_ratio(stock_code_str,stock_min_data,n=20,stock_tday=None):
     """
     :param stock_code_str:
     :param stock_min_data: 股票分钟数据

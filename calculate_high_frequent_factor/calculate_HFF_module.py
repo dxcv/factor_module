@@ -4,6 +4,11 @@ from multi_thread_process_module.multi_process_module import MyProcess
 from multiprocessing import Semaphore
 import pandas as pd
 import calculate_high_frequent_factor.factor0001 as factor0001
+import calculate_high_frequent_factor.factor0003 as factor0003
+import calculate_high_frequent_factor.factor0004 as factor0004
+import calculate_high_frequent_factor.factor0005 as factor0005
+import calculate_high_frequent_factor.factor0006 as factor0006
+import calculate_high_frequent_factor.factor0007 as factor0007
 
 
 class HFFM(object):
@@ -11,6 +16,7 @@ class HFFM(object):
         self.start_date = '2015-01-01'
         self.end_date = '2019-09-01'
         self.m=MongoDB_io()
+        self.nothing=''
         pass
 
     def get_trade_date_list(self):
@@ -46,6 +52,7 @@ class HFFM(object):
         m.set_collection(stock_code_str)
         stock_min_data = m.read_data_from_stock_min_db(start_date,end_date)
         factor0001.calculate_up_ratio(stock_code_str,stock_min_data)
+        factor0003.calculate_ocvp_bcvp(stock_min_data)
         print(stock_code_str, ' done')
         pass
 

@@ -2,7 +2,7 @@ from data_base.mongodb import MongoDB_io
 import pandas as pd
 from decorate_func.decorate_function import print_func_name
 
-start_data='2018-01-01'
+start_date= '2016-01-01'
 end_date='2019-01-01'
 
 
@@ -16,7 +16,7 @@ def get_capital_data():
     """
     m.set_db('stock_daily_data')
     m.set_collection('stock_capital_data')
-    df=m.read_data_to_get_dataframe_include_condition(start_date=start_data,end_date=end_date)
+    df=m.read_data_to_get_dataframe_include_condition(start_date=start_date, end_date=end_date)
     return df[['circulating_market_cap','code','date']].set_index(['date','code']).circulating_market_cap.unstack()
     pass
 
@@ -28,7 +28,7 @@ def get_stock_industry():
     """
     m.set_db('stock_daily_data')
     m.set_collection('stock_sw_industry_code')
-    df=m.read_data_to_get_dataframe_include_condition(start_date=start_data,end_date=end_date)
+    df=m.read_data_to_get_dataframe_include_condition(start_date=start_date, end_date=end_date)
     return df.set_index(['date','stock']).industry_category.unstack()
     pass
 
@@ -36,7 +36,7 @@ def get_stock_industry():
 def get_trade_status():
     m.set_db('stock_daily_data')
     m.set_collection('stock_real_price')
-    df=m.read_data_to_get_dataframe_include_condition(start_date=start_data,end_date=end_date)
+    df=m.read_data_to_get_dataframe_include_condition(start_date=start_date, end_date=end_date)
     df['trade_status']=df.volume>1
     return df[['trade_status','stock','date']].set_index(['date','stock']).trade_status.unstack()
     pass
@@ -49,7 +49,7 @@ def get_ipo_date():
     stock_ipo_date_series=df[['stock','start_date']].set_index('stock').start_date
 
     m.set_collection('stock_trade_date')
-    trade_date=m.read_data_to_get_dataframe_include_condition(start_date=start_data,end_date=end_date)
+    trade_date=m.read_data_to_get_dataframe_include_condition(start_date=start_date, end_date=end_date)
     trade_date_list=trade_date.date.tolist()
     ipo_from_now= pd.DataFrame()
     for stock in stock_ipo_date_series.index:
@@ -64,7 +64,7 @@ def get_ipo_date():
 def get_zz500_weight():
     m.set_db('stock_daily_data')
     m.set_collection('zz500_weight')
-    df=m.read_data_to_get_dataframe_include_condition(start_date=start_data,end_date=end_date)
+    df=m.read_data_to_get_dataframe_include_condition(start_date=start_date, end_date=end_date)
     return df[['weight','code','date']].set_index(['date','code']).weight.unstack()
 
 # zz500_weight=get_zz500_weight()
