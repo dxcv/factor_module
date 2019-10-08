@@ -3,7 +3,7 @@ import pandas as pd
 from decorate_func.decorate_function import print_func_name
 
 start_date= '2016-01-01'
-end_date='2019-01-01'
+end_date='2019-10-05'
 
 
 m=MongoDB_io()

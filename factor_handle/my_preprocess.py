@@ -10,7 +10,7 @@ class preprocess(object):
         self.stock_industry_df=None
         self.trade_status_df=None
         self.ipo_df=None
-        self.nothing=None
+        self.nothing=''
         pass
 
     def de_extremum(self, factor_df):

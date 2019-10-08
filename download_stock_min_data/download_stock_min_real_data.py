@@ -50,7 +50,7 @@ def multi_process_insert_min_data(stock_code_list,start_date,end_date,trade_date
 
 def single_process_insert_min_data(stock_code_list,start_date,end_date,trade_date_list):
     for stock in stock_code_list:
-        print(stock)
+        print(stock,stock_code_list.index(stock))
         inserting_one_stock(stock, start_date, end_date, trade_date_list)
         pass
     pass
@@ -74,7 +74,7 @@ def insert_stock_min_data():
     logging_joinquant()
     stock_list=get_stock_code_list()
     stock_list.sort()
-    stock_list=stock_list[0:200]
+    stock_list=stock_list[300:400]
     start_date=get_setting_start_date()
     trade_date_series:pd.Series=pd.Series(get_trade_date_list(start_date)).astype(str)
     trade_date_list=trade_date_series.tolist()
@@ -88,7 +88,7 @@ def insert_stock_min_data2():
     logging_joinquant()
     stock_list=get_stock_code_list()
     stock_list.sort()
-    stock_list=stock_list[200:400]
+    stock_list=stock_list[100:200]
     start_date=get_setting_start_date()
     trade_date_series:pd.Series=pd.Series(get_trade_date_list(start_date)).astype(str)
     trade_date_list=trade_date_series.tolist()
@@ -102,7 +102,14 @@ def insert_stock_min_data3():
     logging_joinquant()
     stock_list=get_stock_code_list()
     stock_list.sort()
-    stock_list=stock_list[400:600]
+    out_put_df=pd.DataFrame()
+    for i in range(len(stock_list)//100+1):
+        temp=pd.Series(stock_list[100*i:100*(i+1)])
+        temp.name=i
+        out_put_df=out_put_df.append(temp)
+        pass
+    out_put_df.to_csv(r'D:\code\factor_module\download_stock_min_data\stock_list.csv')
+    stock_list=stock_list[200:300]
     start_date=get_setting_start_date()
     trade_date_series:pd.Series=pd.Series(get_trade_date_list(start_date)).astype(str)
     trade_date_list=trade_date_series.tolist()

@@ -12,8 +12,8 @@ def get_sw_industry():
     # 插入数据库
     m=MongoDB_io()
     m.set_db('stock_daily_data')
-    m.set_collection('stock_sw_industry_code')
-    m.delete_document_include_condition()
+    m.set_collection('sw_industry_code')
+    m.remove_all_documents_from_mongodb()
     m.insert_dataframe_to_mongodb(df)
 
 if __name__=='__main__':

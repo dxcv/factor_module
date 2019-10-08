@@ -4,9 +4,9 @@ from factor_handle.get_preprocess_necessary_data import *
 # m=MongoDB_io()
 
 @ print_func_name
-def get_stock_pre_adj_price():
+def get_stock_post_adj_price():
     m.set_db('stock_daily_data')
-    m.set_collection('stock_pre_price')
+    m.set_collection('stock_post_price')
     df=m.read_data_to_get_dataframe_include_condition(start_date=start_date, end_date=end_date)
     return df
     pass

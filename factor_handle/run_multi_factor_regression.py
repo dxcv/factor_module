@@ -23,7 +23,7 @@ factor_dict['ir']=pd.read_csv(r'ir_weight_factor.csv')
 
 trade_status=get_trade_status()
 ipo=get_ipo_date()
-stock_price=get_stock_pre_adj_price()
+stock_price=get_stock_post_adj_price()
 index_daily_data=get_zz500_price()
 circulating_market_cap=get_capital_data()
 stock_industry_code=get_stock_industry()

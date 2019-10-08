@@ -3,9 +3,6 @@ import pandas as pd
 from decorate_func.decorate_function import cal_time
 
 
-
-
-
 class MongoDB_io(object):
     def __init__(self):
         self.client = pymongo.MongoClient('localhost', 27017)
@@ -68,7 +65,7 @@ class MongoDB_io(object):
         while df.shape[0]:
             print('inserting block ',block_count)
             block_count += 1
-            df_component = df.head(block_len)
+            df_component:pd.DataFrame = df.head(block_len)
             self.insert_dataframe_to_mongodb(df_component)
             df = df.iloc[block_len:]
             pass
@@ -112,7 +109,7 @@ class MongoDB_io(object):
     @ cal_time
     def remove_all_documents_from_mongodb(self):
         collection_handle=self.collection_handle
-        collection_handle.delete_many()
+        collection_handle.delete_many({})
         pass
 
     @ cal_time
@@ -143,6 +140,27 @@ class MongoDB_io(object):
         if data_df.shape[0]:
             print('length of data is {}'.format(data_df.shape[0]))
         return data_df
+
+    @ cal_time
+    def read_data_to_get_field_include_condition(self,field,start_date=None,end_date=None,stock_list=None):
+        collection_handle=self.collection_handle
+        condition1={}
+        condition2={}
+        condition3={}
+        if start_date is not None:
+            condition1['date']={'$gt':pd.to_datetime(start_date)}
+        if end_date is not None:
+            condition2['date']={'$lt':pd.to_datetime(end_date)}
+        if stock_list is not None:
+            condition3['stock']={'$in':stock_list}
+        condition={'$and':[condition1,condition2,condition3]}
+        cursor = collection_handle.find(condition,field)
+        data_df = pd.DataFrame(list(cursor))
+        if data_df.shape[0]:
+            data_df.drop('_id',axis=1,inplace=True)
+            print('length of data is {}'.format(data_df.shape[0]))
+        return data_df
+        pass
 
     def read_data_from_stock_min_db(self,start_date=None,end_date=None):
         collection_handle=self.collection_handle

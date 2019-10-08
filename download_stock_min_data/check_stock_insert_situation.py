@@ -2,7 +2,7 @@ from data_base.mongodb import MongoDB_io
 import pandas as pd
 
 m=MongoDB_io()
-m.set_db('stock_min_pre_data')
+m.set_db('stock_real_min_data')
 collection_list=m.list_collection_names()
 collection_list.sort()
 insert_date_df=pd.DataFrame()
