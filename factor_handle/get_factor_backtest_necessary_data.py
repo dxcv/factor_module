@@ -3,7 +3,7 @@ from factor_handle.get_preprocess_necessary_data import *
 
 # m=MongoDB_io()
 
-@ print_func_name
+@ typing_func_name
 def get_stock_post_adj_price():
     m.set_db('stock_daily_data')
     m.set_collection('stock_post_price')
@@ -11,7 +11,7 @@ def get_stock_post_adj_price():
     return df
     pass
 
-@ print_func_name
+@ typing_func_name
 def get_zz500_price():
     m.set_db('index_daily_data')
     m.set_collection('000905_XSHG')

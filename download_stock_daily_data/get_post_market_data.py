@@ -1,5 +1,7 @@
-from download_stock_daily_data.get_real_market_data import insert_price_data
+from download_stock_daily_data.get_real_market_data import get_market_price_class
+
 
 if __name__=='__main__':
-    insert_price_data(initial_flag=True,pre_flag_='post')
+    a = get_market_price_class()
+    a.drop_duplicate_document(fq='post')
     pass

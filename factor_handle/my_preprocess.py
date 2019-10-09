@@ -1,6 +1,6 @@
 import pandas as pd
 import statsmodels.api as sm
-from decorate_func.decorate_function import print_func_name
+from decorate_func.decorate_function import typing_func_name
 
 
 #%%
@@ -42,7 +42,7 @@ class preprocess(object):
         industry_factor_df=industry_factor_df[industry_factor_df.sum(axis=1)==1]
         return industry_factor_df
 
-    @ print_func_name
+    @ typing_func_name
     def neutralize(self, un_neutralize_factor):
         """
         # 中性化因子

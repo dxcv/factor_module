@@ -14,7 +14,7 @@ def cal_time(f):
     return inner
     pass
 
-def print_func_name(f):
+def typing_func_name(f):
     def inner(*args, **kwargs):
         # 函数前执行
         print(f.__name__)

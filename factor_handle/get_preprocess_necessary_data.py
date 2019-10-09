@@ -1,6 +1,6 @@
 from data_base.mongodb import MongoDB_io
 import pandas as pd
-from decorate_func.decorate_function import print_func_name
+from decorate_func.decorate_function import typing_func_name
 
 start_date= '2016-01-01'
 end_date='2019-10-05'
@@ -8,7 +8,7 @@ end_date='2019-10-05'
 
 m=MongoDB_io()
 
-@ print_func_name
+@ typing_func_name
 def get_capital_data():
     """
     获得流通市值
@@ -20,7 +20,7 @@ def get_capital_data():
     return df[['circulating_market_cap','code','date']].set_index(['date','code']).circulating_market_cap.unstack()
     pass
 
-@ print_func_name
+@ typing_func_name
 def get_stock_industry():
     """
     获得股票行业分类
@@ -32,7 +32,7 @@ def get_stock_industry():
     return df.set_index(['date','stock']).industry_category.unstack()
     pass
 
-@ print_func_name
+@ typing_func_name
 def get_trade_status():
     m.set_db('stock_daily_data')
     m.set_collection('stock_real_price')
@@ -41,7 +41,7 @@ def get_trade_status():
     return df[['trade_status','stock','date']].set_index(['date','stock']).trade_status.unstack()
     pass
 
-@ print_func_name
+@ typing_func_name
 def get_ipo_date():
     m.set_db('stock_daily_data')
     m.set_collection('stock_ipo_date')
@@ -60,7 +60,7 @@ def get_ipo_date():
     return ipo_from_now
     pass
 
-@ print_func_name
+@ typing_func_name
 def get_zz500_weight():
     m.set_db('stock_daily_data')
     m.set_collection('zz500_weight')

@@ -55,6 +55,7 @@ class MongoDB_io(object):
         for line in range(df.shape[0]):
             df_data_list.append(df.iloc[line].to_dict())
             pass
+        print('insert '+str(df.shape[0])+' documents!')
         collection_handle.insert_many(df_data_list)
         pass
 
@@ -69,6 +70,7 @@ class MongoDB_io(object):
             self.insert_dataframe_to_mongodb(df_component)
             df = df.iloc[block_len:]
             pass
+        print('insert '+str(df.shape[0])+' documents!')
         pass
 
     """
@@ -109,13 +111,15 @@ class MongoDB_io(object):
     @ cal_time
     def remove_all_documents_from_mongodb(self):
         collection_handle=self.collection_handle
-        collection_handle.delete_many({})
+        result=collection_handle.delete_many({})
+        print(print(result.deleted_count))
         pass
 
     @ cal_time
     def delete_document_include_condition(self,condition):
         collection_handle=self.collection_handle
-        collection_handle.delete_many(condition)
+        result=collection_handle.delete_many(condition)
+        print(print(result.deleted_count))
         pass
 
     """
@@ -202,6 +206,27 @@ class MongoDB_io(object):
         pass
     pass
 
+    @ cal_time
+    def read_data_to_get_dataframe_in_one_date(self, one_date=None, stock_list=None):
+        collection_handle=self.collection_handle
+        condition1={}
+        condition3={}
+        if one_date is not None:
+            condition1['date']=pd.to_datetime(one_date)
+        if stock_list is not None:
+            condition3['stock']={'$in':stock_list}
+        condition={'$and':[condition1,condition3]}
+        cursor = collection_handle.find(condition)
+        data_df = pd.DataFrame(list(cursor))
+        if data_df.shape[0]:
+            data_df.drop('_id',axis=1,inplace=True)
+            print('length of data is {}'.format(data_df.shape[0]))
+        return data_df
+        pass
+    pass
+
+
+
     def creat_index(self,index_description=None):
         # index_description = [('stock', 1), ('date', 1)]
         collection_handle=self.collection_handle
@@ -224,12 +249,12 @@ class MongoDB_io(object):
         return start_date,end_date
         pass
 
-    def get_db_date_list(self):
+    def get_document_in_date(self):
         collection_handle=self.collection_handle
-        cursor=collection_handle.find({},{'date'})
+        cursor=collection_handle.find({},['date','_id'])
         data_df = pd.DataFrame(list(cursor))
-        date_list=data_df['date'].drop_duplicates().sort_values().tolist()
-        return date_list
+        document_in_date:pd.Series=data_df.groupby('date').count().loc[:,'_id']
+        return document_in_date
         pass
 
 

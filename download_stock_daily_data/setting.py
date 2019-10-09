@@ -5,6 +5,6 @@ with open('joinquant_password.json','w') as f:
     json.dump(dic,f)
     pass
 
-dic={'start_date':'2005-01-01'}
-with open('start_date.json','w') as f:
+dic={'start_date':'2005-01-01','end_date':'2019-10-08'}
+with open('start_end_date.json','w') as f:
     json.dump(dic,f)
