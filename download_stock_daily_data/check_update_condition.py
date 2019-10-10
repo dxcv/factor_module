@@ -18,9 +18,12 @@ import pandas as pd
 #          'zz500_weight']
 
 
-db_list=['stock_capital_data',
-         'stock_sw_industry_code',
-         'zz500_weight']
+db_list=[
+            # 'stock_capital_data',
+            # 'stock_sw_industry_code',
+            'stock_real_price_',
+            # 'zz500_weight'
+]
 
 m=MongoDB_io()
 m.set_db('stock_daily_data')

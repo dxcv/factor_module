@@ -100,6 +100,8 @@ class get_min_price_class(object):
         # multi_process_insert_min_data(stock_list,start_date,end_date,trade_date_list)
         pass
 
+
+
     # def insert_stock_min_data2():
     #     change_wording_address()
     #     logging_joinquant()

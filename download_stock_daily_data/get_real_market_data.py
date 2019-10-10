@@ -81,7 +81,34 @@ class get_market_price_class(object):
         m.set_db('stock_daily_data')
         logging_joinquant()
         dic = get_setting_start_end_date()
-        setting_start_date = dic['start_date']
+        # setting_start_date = dic['start_date']
+        setting_start_date = '2012-06-16'
+        setting_end_date = dic['end_date']
+        trade_date_list = get_trade_date_list(setting_start_date, setting_end_date)
+        for date in trade_date_list:
+            date_str=str(date)
+            print(date_str)
+            m.set_collection(collection_name)
+            df=m.read_data_to_get_dataframe_in_one_date(date_str)
+            df_unique=df.dropna()
+            m.set_collection(collection_name+'_')
+            m.insert_dataframe_to_mongodb(df_unique)
+            pass
+        pass
+
+    def drop_duplicate_document2(self,fq=None):
+        m=self.m
+        if fq is None:
+            collection_name='stock_real_price'
+        elif fq=='post':
+            collection_name='stock_post_price'
+        else:
+            return
+        m.set_db('stock_daily_data')
+        logging_joinquant()
+        dic = get_setting_start_end_date()
+        # setting_start_date = dic['start_date']
+        setting_start_date = '2012-06-16'
         setting_end_date = dic['end_date']
         trade_date_list = get_trade_date_list(setting_start_date, setting_end_date)
         for date in trade_date_list:

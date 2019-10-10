@@ -207,7 +207,7 @@ class MongoDB_io(object):
     pass
 
     @ cal_time
-    def read_data_to_get_dataframe_in_one_date(self, one_date=None, stock_list=None):
+    def read_data_to_get_dataframe_in_one_date(self, one_date=None, stock_list=None,_id=None):
         collection_handle=self.collection_handle
         condition1={}
         condition3={}
@@ -219,7 +219,8 @@ class MongoDB_io(object):
         cursor = collection_handle.find(condition)
         data_df = pd.DataFrame(list(cursor))
         if data_df.shape[0]:
-            data_df.drop('_id',axis=1,inplace=True)
+            if not _id:
+                data_df.drop('_id',axis=1,inplace=True)
             print('length of data is {}'.format(data_df.shape[0]))
         return data_df
         pass
